@@ -1,7 +1,12 @@
 import java.util.Scanner;
 
 public class Main {
-
+// SI HAY UN SOLO COSTO
+//  private static final double COSTO_BASE_FIJO = 2000.0;
+/* SI HAY COSTO DIFERENCIADO POR TIPO DE ANIMAL
+  private static final double COSTO_BASE_AVES = 1500.0;
+  private static final double COSTO_BASE_CAZADORES = 3000.0;
+ */
   public static void main(String[] args) {
     Inventario inventario = new Inventario();
     Menu menu = new Menu();
@@ -67,6 +72,11 @@ public class Main {
           System.out.println("\nPresione Enter para continuar...");
           scanner.nextLine();
           break;
+          /*case 9:
+          calcularCostoCuidado(inventario, scanner);
+          System.out.println("\nPresione Enter para continuar...");
+          scanner.nextLine();
+          break; */
         default:
           System.out.println("❌ Opción no válida. Intente nuevamente.");
           System.out.println("\nPresione Enter para continuar...");
@@ -208,4 +218,168 @@ public class Main {
       System.out.println("❌ No se encontró un animal cazador con ese nombre");
     }
   }
+  /*// ... pegar al final de la clase Main, junto a los otros métodos privados
+
+  private static void calcularCostoCuidado(Inventario inventario, Scanner scanner) {
+    System.out.println("\n💲 CALCULAR COSTO DE CUIDADO");
+    System.out.print("Ingrese nombre del animal: ");
+    String nombre = scanner.nextLine();
+
+    Animalito animal = inventario.buscarAnimal(nombre.toUpperCase());
+
+    if (animal != null) {
+      // Verificamos si el animal implementa la interfaz Cuidados
+      if (animal instanceof Cuidados) {
+        System.out.println("✅ Animal encontrado: " + animal.getNombre() + " (" + animal.verTipoDeAnimal() + ")");
+        
+        System.out.print("Ingrese el costo base operativo ($): ");
+        try {
+          double costoBase = scanner.nextDouble();
+          scanner.nextLine(); // Limpiar buffer
+
+          // Hacemos el casting a la interfaz Cuidados para usar el método
+          Cuidados animalConCuidados = (Cuidados) animal;
+          
+          double costoFinal = animalConCuidados.calcularCostoCuidado(costoBase, animal.getEdad());
+          
+          System.out.println("----------------------------------------");
+          System.out.println("Cálculo para: " + animal.getEspecie());
+          System.out.println("Edad: " + animal.getEdad() + " años");
+          System.out.printf("💰 COSTO FINAL DE CUIDADO: $%.2f%n", costoFinal);
+          System.out.println("----------------------------------------");
+          
+        } catch (Exception e) {
+          System.out.println("❌ Error: Ingrese un monto válido.");
+          scanner.nextLine(); // Limpiar buffer en caso de error
+        }
+      } else {
+        System.out.println("⚠️ Este animal no requiere cálculos especiales de cuidado.");
+      }
+    } else {
+      System.out.println("❌ No se encontró un animal con ese nombre.");
+    }
+  }
+   */
+ 
+  /*  CALCULAR COSTO DE CUIDADO CON GASTO FIJO
+  private static void calcularCostoCuidado(Inventario inventario, Scanner scanner) {
+    System.out.println("\n💲 CALCULAR COSTO (Base fija: $" + COSTO_BASE_FIJO + ")");
+    System.out.print("Ingrese nombre del animal: ");
+    String nombre = scanner.nextLine();
+
+    Animalito animal = inventario.buscarAnimal(nombre.toUpperCase());
+
+    if (animal != null) {
+        if (animal instanceof Cuidados) {
+            // YA NO PEDIMOS EL DATO, USAMOS LA CONSTANTE DIRECTAMENTE
+            double costoFinal = ((Cuidados) animal).calcularCostoCuidado(COSTO_BASE_FIJO, animal.getEdad());
+
+            System.out.println("✅ Animal: " + animal.getNombre());
+            System.out.println("📊 Costo calculado: $" + costoFinal);
+        } else {
+            System.out.println("⚠️ Este animal no requiere cuidados especiales.");
+        }
+    } else {
+        System.out.println("❌ No se encontró el animal.");
+    }
+}
+   */
+  /* EN EL CASO DE QUE NOS DEN EL COSTO Y SEA FIJO GASTOS TOTALES
+  private static void mostrarReporteDeGastos(Inventario inventario) {
+    double gastoTotal = 0;
+    
+    System.out.println("\n=== REPORTE DE GASTOS MENSUALES (Base: $" + COSTO_BASE_FIJO + ") ===");
+    
+    // Juntamos ambas listas para recorrerlas
+    ArrayList<Animalito> todos = new ArrayList<>();
+    todos.addAll(inventario.getAvicolas());
+    todos.addAll(inventario.getCaceras());
+
+    for (Animalito a : todos) {
+        if (a instanceof Cuidados) {
+            double costoIndividual = ((Cuidados) a).calcularCostoCuidado(COSTO_BASE_FIJO, a.getEdad());
+            System.out.println(a.getNombre() + " (" + a.verTipoDeAnimal() + "): $" + costoIndividual);
+            gastoTotal += costoIndividual;
+        }
+    }
+    
+    System.out.println("--------------------------------");
+    System.out.println("💰 GASTO TOTAL DE LA VETERINARIA: $" + gastoTotal);
+} */
+/* EN EL CASO DE QUE SEA UN COSTO DIFERENCIADO POR TIPO DE ANIMAL
+private static void calcularCostoCuidado(Inventario inventario, Scanner scanner) {
+    System.out.println("\n💲 CALCULAR COSTO DIFERENCIADO");
+    System.out.print("Ingrese nombre del animal: ");
+    String nombre = scanner.nextLine();
+
+    Animalito animal = inventario.buscarAnimal(nombre.toUpperCase());
+
+    if (animal != null) {
+        double costoBaseSeleccionado = 0; // Variable auxiliar
+        double costoFinal = 0;
+
+        // 1. DECIDIMOS EL COSTO BASE SEGÚN EL TIPO
+        if (animal instanceof Avicolas) {
+            costoBaseSeleccionado = COSTO_BASE_AVES;
+            System.out.println("ℹ️ Detectado: AVICOLA (Base aplicada: $" + COSTO_BASE_AVES + ")");
+        } else if (animal instanceof Caceras) {
+            costoBaseSeleccionado = COSTO_BASE_CAZADORES;
+            System.out.println("ℹ️ Detectado: CAZADOR (Base aplicada: $" + COSTO_BASE_CAZADORES + ")");
+        }
+
+        // 2. HACEMOS EL CÁLCULO SI CORRESPONDE
+        if (animal instanceof Cuidados) {
+            // Pasamos la variable 'costoBaseSeleccionado' que ya tiene el precio correcto
+            costoFinal = ((Cuidados) animal).calcularCostoCuidado(costoBaseSeleccionado, animal.getEdad());
+
+            System.out.println("----------------------------------------");
+            System.out.println("Animal: " + animal.getNombre());
+            System.out.printf("💰 COSTO FINAL: $%.2f%n", costoFinal);
+            System.out.println("----------------------------------------");
+        } 
+    } else {
+        System.out.println("❌ No se encontró el animal.");
+    }
+} */
+/* COSTO DE CUIDADO EN TOTAL CON GASTOS DIFERENCIADOS
+private static void mostrarReporteTotal(Inventario inventario) {
+    // Definimos los costos fijos aquí para este reporte
+    final double COSTO_BASE_AVES = 1500.0;
+    final double COSTO_BASE_CAZADORES = 3000.0;
+
+    System.out.println("\n📊 REPORTE DE GASTOS TOTALES (Precios diferenciados)");
+    System.out.println("==================================================");
+    System.out.println("Base Aves: $" + COSTO_BASE_AVES + " | Base Cazadores: $" + COSTO_BASE_CAZADORES);
+    System.out.println("--------------------------------------------------");
+
+    double totalGeneral = 0;
+    
+    // 1. Juntamos todos los animales en una sola lista auxiliar
+    java.util.ArrayList<Animalito> todosLosAnimales = new java.util.ArrayList<>();
+    todosLosAnimales.addAll(inventario.getAvicolas());
+    todosLosAnimales.addAll(inventario.getCaceras());
+
+    // 2. Recorremos y calculamos
+    for (Animalito a : todosLosAnimales) {
+        double base = 0;
+        
+        // Asignamos precio según el tipo
+        if (a instanceof Avicolas) base = COSTO_BASE_AVES;
+        else if (a instanceof Caceras) base = COSTO_BASE_CAZADORES;
+        
+        // Verificamos y calculamos
+        if (a instanceof Cuidados) {
+            double costo = ((Cuidados) a).calcularCostoCuidado(base, a.getEdad());
+            totalGeneral += costo;
+            
+            // (Opcional) Imprimir cada línea para ver el detalle
+            System.out.printf(" - %-10s (%s): $%.2f%n", a.getNombre(), a.verTipoDeAnimal(), costo);
+        }
+    }
+
+    System.out.println("==================================================");
+    System.out.printf("💰 TOTAL A PAGAR EN CUIDADOS: $%.2f%n", totalGeneral);
+    System.out.println("==================================================");
+  }
+ */
 }
